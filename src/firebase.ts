@@ -2,11 +2,8 @@ import { initializeApp } from "firebase/app";
 import {
     getFirestore,
     collection,
-    getDocs
-
+    getDocs,
 } from 'firebase/firestore';
-
-
 
 const firebaseConfig = {
   apiKey: "AIzaSyBR7hP6N6NR_ECkPoKQ66_HUQh0UY7kIQ8",
@@ -20,7 +17,7 @@ const firebaseConfig = {
 export const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
 
-interface Contacto {
+export interface Contacto {
     id: string,
     casa: string,
     correo: string,
@@ -37,7 +34,10 @@ export const getContactos = async (): Promise<Contacto[]> => {
    
    const snapshot = await getDocs(contactos.collection);
    snapshot.forEach(doc => {
-    contactos.list.push(doc.data() as Contacto);
+    contactos.list.push({
+      id: doc.id,
+      ...doc.data(),
+    } as Contacto);
    });
 
    return contactos.list; 
