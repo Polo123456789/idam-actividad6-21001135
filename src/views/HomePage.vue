@@ -17,24 +17,26 @@
     <ion-searchbar v-model="busqueda" placeholder="Buscar por nombre o telefono"></ion-searchbar>
 
     <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-      <ion-fab-button>
+      <ion-fab-button @click="printReport">
         <ion-icon :icon="newspaperOutline"></ion-icon>
       </ion-fab-button>
     </ion-fab>
 
-    <ion-card v-for="contacto of contactosFiltrados" :key="contacto.id">
-      <ion-card-header>
-        <ion-card-title>{{contacto.nombre}}</ion-card-title>
-      </ion-card-header>
-      <ion-card-content>
-        <ul>
-          <li>Telefono de Casa: {{contacto.casa}}</li>
-          <li>Telefono Movil: {{contacto.movil}}</li>
-          <li>Direccion: {{contacto.direccion}}</li>
-          <li>Correo: {{contacto.correo}}</li>
-        </ul>
-      </ion-card-content>
-    </ion-card>
+    <div ref="contactos">
+      <ion-card v-for="contacto of contactosFiltrados" :key="contacto.id">
+        <ion-card-header>
+          <ion-card-title>{{contacto.nombre}}</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <ul>
+            <li>Telefono de Casa: {{contacto.casa}}</li>
+            <li>Telefono Movil: {{contacto.movil}}</li>
+            <li>Direccion: {{contacto.direccion}}</li>
+            <li>Correo: {{contacto.correo}}</li>
+          </ul>
+        </ion-card-content>
+      </ion-card>
+    </div>
     </ion-content>
   </ion-page>
 </template>
@@ -56,8 +58,9 @@ import {
   IonIcon,
 } from '@ionic/vue';
 import { newspaperOutline } from 'ionicons/icons';
-import { defineComponent } from 'vue';
+import { defineComponent, } from 'vue';
 import Fuse from 'fuse.js';
+import { Printer } from '@awesome-cordova-plugins/printer';
 
 import { getContactos, Contacto } from '@/firebase';
 
@@ -107,6 +110,11 @@ export default defineComponent({
       const fuse = new Fuse(this.contactos, fuseOptions);
 
       return fuse.search(this.busqueda).map(i => i.item);
+    }
+  },
+  methods: {
+    printReport() {
+      Printer.print((this.$refs.contactos as HTMLDivElement).innerHTML);
     }
   }
 });
